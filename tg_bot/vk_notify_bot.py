@@ -3,8 +3,7 @@ from telegram.ext import Updater, CommandHandler
 from time import sleep
 
 from tg_bot.setup_list import *
-from tg_bot.utils import get_user_info_vk, create_online_report
-
+from tg_bot.utils import get_user_info_vk, create_online_report, get_user_fullname
 
 updater = Updater(token=bot_assistant_tg_token)
 dispatcher = updater.dispatcher
@@ -31,11 +30,14 @@ def online(update, context):
 
 
 def report(update, context):
-    user_id, duration = '111297977', 10
+    user_id, duration = '111297977', 1
     if len(context.args) == 2:
         user_id = context.args[0]
         duration = int(context.args[1])
-    context.bot.send_message(chat_id=update.effective_chat.id, text=create_online_report(user_id, duration))
+    message = create_online_report(user_id, duration)
+    if not message:
+        message = f"Пользователь {get_user_fullname(user_id)} не появлялся в сети"
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 
 start_handler = CommandHandler('start', start)
